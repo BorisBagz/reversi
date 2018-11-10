@@ -1,0 +1,1002 @@
+
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage[normalem]{ulem}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[backend=biber,
+style=numeric,
+sorting=ynt
+]{biblatex}\addbibresource{bibliography.bib}
+
+\usepackage{subfig}
+\usepackage{wrapfig}
+\usepackage{wasysym}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+\usepackage{ragged2e}
+\usepackage[svgnames,table]{xcolor}
+\usepackage{longtable}
+\usepackage{changepage}
+\usepackage[none]{hyphenat}
+\usepackage{setspace}
+\usepackage{hhline}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{fancyhdr}
+\usepackage[toc,page]{appendix}
+\usepackage[a4paper,left=0.79in,right=0.79in,top=0.79in,bottom=0.79in,headheight=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+
+
+\urlstyle{same}
+
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+
+\everymath{\displaystyle}
+
+
+\setlistdepth{9}
+\newlist{custom_Enumerate}{enumerate}{9}
+	\setlist[custom_Enumerate,1]{label=\arabic*)}
+	\setlist[custom_Enumerate,2]{label=\alph*)}
+	\setlist[custom_Enumerate,3]{label=(\roman*)}
+	\setlist[custom_Enumerate,4]{label=(\arabic*)}
+	\setlist[custom_Enumerate,5]{label=(\Alph*)}
+	\setlist[custom_Enumerate,6]{label=(\Roman*)}
+	\setlist[custom_Enumerate,7]{label=\arabic*}
+	\setlist[custom_Enumerate,8]{label=\alph*}
+	\setlist[custom_Enumerate,9]{label=\roman*}
+
+\renewlist{itemize}{itemize}{9}
+	\setlist[itemize]{label=$\cdot$}
+	\setlist[itemize,1]{label=\textbullet}
+	\setlist[itemize,2]{label=$\circ$}
+	\setlist[itemize,3]{label=$\ast$}
+	\setlist[itemize,4]{label=$\dagger$}
+	\setlist[itemize,5]{label=$\triangleright$}
+	\setlist[itemize,6]{label=$\bigstar$}
+	\setlist[itemize,7]{label=$\blacklozenge$}
+	\setlist[itemize,8]{label=$\prime$}
+
+\setlength{\topsep}{0pt}\setlength{\parskip}{12pt}
+
+\begin{document}
+
+\title{
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+Compte Rendu.\\ Reversi: Advanced Computer Player}
+\author{GONZALEZ ZAMBRANO, Boris Antonio\\
+\small{Master 1 Informatique - Cryptologie et Sécurité Informatique}\\
+\small{4TIN707U - Programmation}\\
+\small{UNIVERSITÉ DE BORDEAUX}}
+\date{\small{\today}}
+
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\vspace{\baselineskip}
+\noindent \begin{Center}
+
+\setstretch{1.5}
+\section{Chapitre 1}
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Avant de finir le projet nous avons fait quelques changements algorithmiques, mais le principal était le changement de la fonction heuristique, ce qui est le plus important car il nous donne de la puissance au moment d’implémenter la « Intelligence Artificielle » dans le jeu.
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Après avoir faire ça nous avons changé les valeurs que nous utilisons pour exécuter l’algorithme minimax avec alpha – beta. Nous avons implémenté le \textit{aspiration search }qui est une petite amélioration à l’appelle de la fonction minimax alpha - beta\textit{ }dans laquelle nous changeons les valeurs de alpha et beta. Normalement l’appel à cette fonction est \textbf{\textit{minimax$ \_ $ab(board, depth, player, alpha, beta); }}alpha vaut –INFINITE et beta vaut INFINITE, mais avec le \textit{aspiration search }on n’utilise plus les valeurs d’infinité. Nous le remplaçons alors par une valeur qui va être une approximation du résultat attendu, et un « fenêtre » qui va être la déviation qu’on pense que cette valeur puisse avoir. 
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Avec \textit{aspiration search }nous allons explorer moins nœuds puisque les limites de alpha et beta seront déjà posés dès le début. L’unique problème que pourrait arriver ce que les valeurs heuristiques ne soient pas dans nos hypothèses, dans ce cas la recherche va échouer. Mais comme valeurs nous avons utilisé 10 et comme fenêtre 5, puisqu’on pense qu’aucun nœud aura plus de 15 mouvements possibles. Avec cette implémentation nous allons diminuer le temps d’exécution.
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \subsection{La fonction Heuristique}\par
+
+
+\noindent \begin{justify}
+Au début nous avions une fonction heuristique très simple qui calculait la différence de points, ou de pierres dans le tableau, entre le joueur et son adversaire. Mais cette heuristique n’est pas très efficace pour le jeu Reversi, car nous pouvons avoir une grande différence de points à notre faveur, mais si notre adversaire a plus mouvements possibles et avec une meilleure position, il peut gagner après quelques mouvements. 
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Les fonctionnalités les plus importantes pour le jeu Reversi sont la stabilité, la mobilité et la parité des disques ou pierres. En particulier on peut dire que les pierres stables ne peuvent pas être tournées par les adversaires, et que les coins sont les positions qui donnent une plus grande stabilité. Alors, avoir moins possibilités ou moins mouvements que notre adversaire est dangereux, car cela incrémente les possibilités de perdre un coin au futur. Les coins fonctions comme des ancres pour stabiliser les pierres qui sont proches d’elle. 
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+C’est pour ça que nous avons modifié cette fonction heuristique pour qu’elle puisse calculer la quantité de mouvements possibles qu’aura chaque nœud étudié pour l’algorithme de recherche d’arbre. On alloue cette valeur à une variable qui va être les valeurs heuristiques des nœuds. Après, on teste si dans la liste de mouvements possibles il existe au moins un coin, et dans ce cas, on va augmenter la valeur heuristique pour chaque coin qu’on trouve dans les mouvements possibles des nœuds. Nous avons pris en compte aussi les positions qui peuvent donner une opportunité à notre adversaire d’obtenir un coin. Nous l’appelons les frontières, qui sont les positions adjacentes aux coins. Avec la même stratégie d’avant, nous avons cherché des frontières dans les mouvements possibles de chaque nœud et nous diminuons la valeur heuristique pour chacune qu’on trouve.
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+
+\begin{table}[H]
+ 			\centering
+\begin{tabular}{p{0.12in}p{0.11in}p{0.11in}p{0.11in}p{0.11in}p{0.11in}p{0.11in}p{0.11in}}
+\hline\multicolumn{1}{|p{0.12in}}{\Centering +\par} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}|}{\Centering +\par} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}|}{\Centering -\par} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}|}{
+\vspace{\baselineskip}
+} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}|}{
+\vspace{\baselineskip}
+} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}|}{
+\vspace{\baselineskip}
+} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}|}{
+\vspace{\baselineskip}
+} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}|}{\Centering -\par} \\
+\hhline{--------}
+\multicolumn{1}{|p{0.12in}}{\Centering +\par} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{
+\vspace{\baselineskip}
+} & 
+\multicolumn{1}{|p{0.11in}}{\Centering -\par} & 
+\multicolumn{1}{|p{0.11in}|}{\Centering +\par} \\
+\hhline{--------}
+
+\end{tabular}
+ \end{table}
+
+
+\newpage
+
+\vspace{\baselineskip}
+\noindent \begin{Center}
+\section{Chapitre 2}
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Pour ce chapitre nous allons expliquer les techniques d’implémentation que nous avons utilisée pour développer le projet. Pour être un projet si long et un peu vaste nous devions connaître plusieurs techniques et outils de programmation, plus spécifiquement du langage C. Mais nous devons souligner les points les plus importants:
+\end{justify}\par
+
+\begin{itemize}
+	\item Structure de données.\par
+
+	\item Fonctions.\par
+
+	\item Libraires.
+\end{itemize}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \subsection{Structure de données.}\par
+
+
+\noindent \begin{justify}
+Pour gérer les « objets » du projet, nous avons utilisé des structures de données, avec lesquelles nous pouvons organiser les composants de chaque objet dans un même ensemble. Ça veut dire, que chaque instance des objets va avoir les mêmes éléments et nous allons le stocker avec la même structure. Pour faire ça nous avons créé une structure principale, appelé \textbf{\textit{board$ \_ $ t}, }que nous avons défini de la forme suivante:
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{struct board$ \_ $ t}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \{ $ }
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{size$ \_ $ t size;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{stone$ \_ $ t player;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{stone$ \_ $ t **grid;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{moves$ \_ $ t *moves;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \} $ ;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Chacun des \textbf{\textit{board$ \_ $ t}} va avoir les mêmes éléments:
+\end{justify}\par
+
+\begin{itemize}
+	\item \textbf{size}: La taille du board. Elle doit être entre 2 et 8.\par
+
+	\item \textbf{player}: Ici on va avoir l’identificateur du joueur courant. C’est de type \textbf{\textit{stone$ \_ $ t}}, qui est aussi une structure.\par
+
+	\item \textbf{grid}: Ce sont les cases du board. Cet élément sera un pointeur de 2 dimensionnes, pour mieux gérer les lignes et colonnes. Il va être aussi du type \textbf{\textit{stone$ \_ $ t}}. \par
+
+	\item \textbf{moves}: Les mouvements qui va avoir le jouer dans le board. Il va être du type \textbf{\textit{moves$ \_ $ t.}}
+\end{itemize}\par
+
+
+\noindent \begin{justify}
+Cette structure est la plus importante du projet puisque c’est avec ces composants qu’on peut jouer. On implémente la plus part des fonctions qui sont en charge du jeu dans \textbf{\textit{board$ \_ $ t}}, aussi c’est ici où on applique les mouvements pour jouer, c’est le cœur du jeu.
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Autres structures que nous avons utilisés sont les suivantes:
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{struct moves$ \_ $ t}
+\end{justify}\par
+
+
+\noindent \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \{ $ }\par
+
+
+\noindent \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{size$ \_ $ t size;}\par
+
+
+\noindent \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{move$ \_ $ t *list;}\par
+
+
+\noindent \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{$ \} $ ;}\par
+
+
+\noindent \begin{justify}
+Nous avons créé \textbf{\textit{moves$ \_ $ t }}pour gérer les mouvements qui va avoir le joueur et on peut le résumer comme une liste qui va enregistrer les coordonnes des mouvements possibles. 
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{struct node$ \_ $ t}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \{ $ }
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{int value;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{move$ \_ $ t move;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{$ \} $ ;}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Nous avons créé une dernière structure auxiliaire dans le module \textbf{\textit{player}} appelé \textbf{\textit{node$ \_ $ t, }}qui va nous aider au moment d’implémenter les algorithmes de recherche d’arbre. Chaque nœud des arbres qu’on va créer au moment de chercher le meilleur mouvement possible va avoir un \textbf{\textit{move}} ou un mouvement avec des coordonnes des lignes et colonnes dans le tableau, et aussi un \textbf{\textit{value }}ou valeur numérique entière heuristique, que nous allons le donner après exécuter la fonction qui calcule l’heuristique. Cette fonction va nous aider au moment d’implémenter les algorithmes de recherche d’arbres. 
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \subsection{Fonctions}\par
+
+
+\noindent \begin{justify}
+Pour ce projet nous avons créé plusieurs fonctions (presque 50), certaines plus importantes que d’autres, mais ils font tous un travail nécessaire. Nous allons expliquer un peu les plus importantes et ceux qu’on a créés de maniéré auxiliaire pour nous aider au moment de l’implémentation et codification :
+\end{justify}\par
+
+
+\begin{itemize}
+	\item \textbf{\textit{board$ \_ $ is$ \_ $ move$ \_ $ valid}}: Nous allons donner un mouvement à cette fonction (coordonnes des lignes et colonnes), et cette fonction va nous dire si cet mouvement est valide, en fonction du joueur courant et les pierres de l’adversaire.\par
+
+	\item \textbf{\textit{board$ \_ $ play}}: C’est la fonction principale du mécanisme de jeu. On lui donne un mouvement (coordonnes des lignes et colonnes) et on le place dans ces coordonnes, en tournant les pierres de l’adversaire qui sont entre la pierre qui vient d’être placé et les autres pierres du joueur courant. \par
+
+
+	\item \textbf{\textit{board$ \_ $ load}}: Nous allons utiliser cette fonction pour charger un fichier existant, mais elle va accepter seulement si le fichier est un tableau avec le format du jeu. Elle a été créée pour charger des fichiers des tableaux sauvegardés, en nous donnant l’opportunité de quitter et continuer un match quand nous voulons.\par
+
+
+	\item \textbf{\textit{board$ \_ $ set$ \_ $ player}}: Cette fonction est très simple, mais nous l’avons créé pour faciliter le fonctionnement du jeu, plus spécifiquement au moment de faire le changement de joueurs après ces mouvements, pour changer le joueur après avoir sauvegarder le jeu et avant de le quitter. Elle va avoir comme argument un tableau et un joueur spécifique, et elle va retourner le même tableau, mais nous allons changer le joueur courant par ce qui a été donné comme argument.\par
+	
+
+	\item \textbf{\textit{minimax$ \_ $ab( ) et minimax( )}}: Ces fonctions auxiliares ont été créées pour gérer la vraie implémentation des algorithmes de recherche d'arbres, en utilisant l'algorithme Minimax et Minimax avec l'élagage Alpha - Beta respectivement. On les envoie comme arguments un tableau, un entier positive pour representer la profondeur qu'on veut utiliser dans l'algortihme et le joueur courant du tableau. Pour Alpha - Beta nous l'envoyons de plus les valeurs qu'on veut utiliser pour Alpha et Beta respectivement. Nous faisons les appels de ces fonctions dès \textbf{\textit{minimax$ \_ $player}} et \textbf{\textit{minimax$ \_ $ab$ \_ $player}} respectivement dans lequel on reçoit les paramètres dès la fonction principale du jeu. Les deux fonctions retournent le meilleur noeud que les algorithmes peuvent trouver.\par
+
+
+
+
+	\item \textbf{\textit{version}}: Une fonction très basique qui va imprimer la version du logiciel et quelques autres informations. Elle est statique et elle ne va rien retourner.\par
+
+
+
+	\item \textbf{\textit{playervalid}}: Cette fonction a été créée pour savoir si le joueur courant a au moins un mouvement possible dans le tableau qu’on le donne comme argument. Nous l’utilisons dans le module principal \textbf{\textit{reversi}}, dans la fonction \textbf{\textit{game. }}Elle va parcourir tout le tableau et va chercher un mouvement valide avec l’aide de la fonction \textbf{\textit{board$ \_ $ is$ \_ $ move$ \_ $ valid}}. Si elle trouve un mouvement elle va retourner une booléenne \textbf{\textit{true.}} \textbf{\textit{ }}\par
+
+
+
+
+	\item \textbf{\textit{printgamemode: }}C’est une fonction qui va nous faciliter le travail au moment de faire l’impression de l’information de jeu au début de l’exécution. Elle va prendre comme argument le type de jeu que l’utilisateur a choisi, et elle va imprimer l’information concernant à la valeur du type de jeu. (tous les deux joueurs seront humains, les deux seront gérés par l’ordinateur, ou une combinaison d’humaine et ordinateur.)
+\end{itemize}\par
+
+
+\noindent  \par
+
+
+\noindent \subsection{Librairies}\par
+
+
+\noindent Nous avons utilisé plusieurs librairies, par exemple les plus importants et les plus connues \textbf{\textit{stdio }}et \textbf{\textit{stdlib, }}mais nous avons utilisé aussi des autres librairies comme les suivantes:\par
+
+
+\vspace{\baselineskip}
+\begin{itemize}
+	\item \textbf{\textit{err.h}}: Nous avons implémenté cette librairie dans les modules \textbf{\textit{board} }et \textbf{\textit{reversi}}, et on utilise les fonctions \textbf{\textit{err}} et \textbf{\textit{stderr, }}avec lesquelles nous gérons les erreurs dans le programme. Plus spécifiquement, si on doit imprimer un message d’erreur lorsqu’on trouve qu’un argument est incorrect au moment d’exécuter le programme et quand nous trouvons qu’une allocation de mémoire n’a pas été bien fait. \par
+
+
+\vspace{\baselineskip}
+	\item \textbf{\textit{string.h}}: Nous avons utilisé plusieurs composants de cette librairie, comme le type de données \textbf{\textit{size$ \_ $ t }}que nous utilisons pour les variables qui vont avoir les tailles des tableaux et des listes des mouvements. \textbf{\textit{NULL} }qui nous permet définir un pointeur vide ou nulle. \textbf{\textit{strcat }}que nous avons utilisé pour faire une concaténation des chaînes au moment de transformer ce que nous avons dans un tableau ou une liste à une chaîne de caractères. \par
+
+
+\vspace{\baselineskip}
+	\item \textbf{\textit{getopt.h}}: \textbf{\textit{getopt.h }}forme partie d’une librairie plus grande qui s’appelle \textbf{\textit{unistd.h, }}mais comme nous allons seulement utiliser une composante de cette fonction nous avons appelé seulement à \textbf{\textit{getopt.h. }}Elle va nous aider avec le parseur que nous avons utilisé dans le main de \textbf{\textit{reversi.c, }}avec la fonction \textbf{\textit{getopt( )}}.
+\end{itemize}\par
+
+\newpage
+
+\vspace{\baselineskip}
+\noindent \begin{Center}
+\section{Chapitre 3.} 
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+\noindent \subsection{Qualité du code.}\par
+
+
+\vspace{\baselineskip}
+\begin{justify}
+Pour assurer la qualité du code dans ce projet, nous avons pris en compte quelques mesures pour que le code puisse être plus compréhensible ou plus agréable au moment où une autre personne le lit. Par exemple, nous avons essayé de maintenir la clarté dans le code, car si le code est facile de comprendre, alors il serait facile de changer ou améliorer. Pour ça nous avons utilisé une seule structure du codage pour tout le code, une mémé format au moment d’utiliser les fonctions du langage et une bonne implémentation du \textit{code style.}
+\end{justify}\par
+
+\begin{justify}
+Par exemple, au moment d’écrire une nouvelle fonction ou d’utiliser une \textit{for}, \textit{while}, etc., nous l’écrivons comme ça:
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{int foo (int a, int b)}
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \{ $ }
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}…}
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{for ( i = 0 ; i < size ; i++ )}
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{$ \{ $ }
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}…}
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \} $  }
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\textit{\hspace*{0.49in}$ \} $ }
+\end{justify}\par
+
+
+\begin{justify}
+Ainsi, à notre avis, le code sera plus facile de lire. Nous avons pris en compte aussi le \textit{code style} du C, ça veut dire que nous avons suivi les règles au moment d’écrire le code, en respectant la maniéré dans laquelle nous utilisons les indentations (de 2, 4 ou 6 espaces), les noms qu’on utilise pour les variables et fonctions (toujours en anglais et avec du sens avec le programme, qui décrit un peu son fonction), nous ne surpassons pas 80 caractères par ligne du code, en donnant des espaces au moment d’utiliser les opérateurs du langage (par exemple:\textit{ if ( size == 4 $ \vert $ $ \vert $  size == 6 )}), au moment de faire les \textit{$\#$ include, }on les ordonne alphabétiquement et on les divise selon le type de librairie, et quelques autres règles.
+\end{justify}\par
+
+
+\begin{justify}
+Nous essayons aussi d’être consistant, si au moment du codage nous devons faire quelque chose similaire à une autre qui est déjà existant, nous le faisons d’une maniéré similaire ou égal, en utilisant des noms similaires, les mémés paramètres et avec une structure du code pareil.
+\end{justify}\par
+
+
+\begin{justify}
+Nous avons aussi documenté le code. Pour chaque fonction nous avons écrit une petite description de ce qu’elle fait, ces paramétrés et ce qu’elle retourne (dans le cas qu’elle retourne quelque chose). Par exemple pour la fonction \textit{board$ \_ $ init }nous avons écrit: 
+\end{justify}\par
+
+
+\begin{justify}
+\textit{/* this function creates and initialize the board with the 4 initial stones placed in the center, we use the parameter size to create the board and in the end we return it already initialized */ }
+\end{justify}\par
+
+\begin{justify}
+\textit{board$ \_ $ t *board$ \_ $ init (size$ \_ $ t size)}
+\end{justify}\par
+
+\begin{justify}
+\textit{$ \{ $ }
+\end{justify}\par
+
+\begin{justify}
+\textit{…}
+\end{justify}\par
+
+\begin{justify}
+\textit{$ \} $ }
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+	\subsection{Modularité du code}\par
+
+\begin{justify}
+La modularité du code n’est pas importante pour l’ordinateur ou pour le compilateur, puisqu’il peut exécuter le logiciel même si nous avons tous les instructions dans le mémé \textit{.c}, mais nous utilisons les outils de modularité pour nous, pour les développeurs et pour ceux qui vont voir et lire notre code.
+\end{justify}\par
+
+\begin{justify}
+Si on prend en compte la modularité du code, on pourra nous concentrer dans une petite partie du code au moment du codage, ainsi sera plus facile de faire le programme et dans le cas qu’on a des erreurs, comme ça sera plus facile aussi de les trouver et \textit{debugger}.~ Pour ça nous avons implémenté dans notre programme quatre modules, \textit{reversi, board, player, }et \textit{moves. }Chacun a son propre \textit{.h}, ou \textit{header, }dans lequel on définit les fonctions et les structures que nous allons utiliser dans ce module. 
+\end{justify}\par
+
+\begin{justify}
+Ils ont aussi ses propres \textit{.c}, qui sont le cœur des modules. Ici on implémente et on utilise ce qu’on a défini dans les \textit{.h}. Dedans chaque \textit{.c} nous avons des fonctions, dans lesquelles nous divisons le travail et les processus que nous devons faire pour que le programme marche comme il doit. Chaque fonction a un travail différent, et ils peuvent être appellés et utilisés pour des autres fonctions, dans les mémés \textit{.c} ou dans une autre. Avec cette \textit{feature}~nous pouvons dire que notre programme est modulaire et récursive.  
+\end{justify}\par
+
+\begin{justify}
+Nous avons implémenté aussi une maniéré de « cacher » les structures que nous avons utilisé dans le programme. Par exemple, la vraie structure de \textit{board$ \_ $ t }seulement peut être vu par le module \textit{board}, et pas pour les autres modules, ni pour le module principal \textit{reversi}, qui est le module qui va à avoir contact avec l’utilisateur. Ainsi on peut assurer la sécurité de la structure, l’utilisateur peut avoir accès aux éléments de la structure, mais il ne peut pas voir comment ça marche ni comment elle est composée. Les autres modules peuvent aussi avoir accès aux éléments des structures mais seulement à travers des fonctions qui vont retourner ce qu’ils demandent. Pour faire ça nous devons faire l’inclusion des modules avant de commencer à coder dans les \textit{.c} et les \textit{.h}, avec l’instruction \textit{$\#$ include }qui va nous permettre d’utiliser les fonctions qui sont dans un autre module.
+\end{justify}\par
+
+\begin{justify}
+Pour faire ça on a implémenté la fonctionnalité \textit{typedef struct }dans le \textit{.h} qui va avoir la structure dedans son \textit{.c. }Par exemple:
+\end{justify}\par
+
+\begin{Center}
+\textit{typedef struct board$ \_ $ t board$ \_ $ t; } 
+\end{Center}\par
+
+
+\begin{justify}
+dans \textit{board.h}, et:
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}struct board$ \_ $ t board
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}$ \{ $ 
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}size$ \_ $ t size;
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}...
+\end{justify}\par
+
+\begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}$ \} $ ;
+\end{justify}\par
+
+\begin{justify}
+dans \textit{board.c }et \textit{bitboard.c.}
+\end{justify}\par
+
+\begin{justify}
+Évidemment chaque module a un \textit{.o} ou programme objet après la compilation, qui est le programme en langage d’ordinateur qui va être lu par lui-même avant d’exécuter le programme. Au moment d’implémenter la modularité dans notre code on peut avoir des avantages, par exemple nous avons réutilisé les modules au moment de faire \textit{bitboard.c} qui est une implémentation une peu différent de\textit{ board.c} mais avec la mémé structure et avec la mémé fonctionnalité, en fait nous avons utilisé le même \textit{.h} pour le deux. Ça nous permet de ne pas avoir besoin d’écrire le mémé code plusieurs fois, en réutilisant les fonctions qu’on a déjà codé, puisqu’on peut l’appeler toutes les fois que nous voulons. 
+\end{justify}\par
+
+\begin{justify}
+Pour faire l’union entre tous les parties et tous les modules du programme nous avons utilisé un \textit{Makefile}, qui est un fichier spécial qui contient des instructions \textit{shell, }et qui nous exécutons avec le commande \textit{make}. Avec cette commande, nous allons exécuter les instructions qui sont dans le \textit{Makefile.} Dans notre \textit{Makefile} nous avons mis tous les \textit{.c } et \textit{.h} qui nous devions utiliser pour créer chaque exécutable que nous voulons. Par exemple pour créer l’exécutable reversi-1 nous avions l’instruction suivante: 
+\end{justify}\par
+
+\begin{Center}
+\textit{reversi-1: reversi.o board.o moves.o player.o}
+\end{Center}\par
+
+\begin{Center}
+\hspace*{0.49in}\hspace*{0.49in}\textit{$\$$ (CC) $\$$ (CFLAGS) -o $\$$ @ $\$$ $ \string^ $  $\$$ (LDFLAGS)}
+\end{Center}\par
+
+\begin{justify}
+Ainsi on peut faire l’union entre tous les modules au moment de compilation (on peut regarder que pour créer l’exécutable \textit{reversi-1} nous avions besoin des modules \textit{reversi, board, moves }et \textit{player).}
+\end{justify}\par
+
+
+\begin{justify}
+Nous devons remarquer aussi la maniéré dans laquelle nous avons ordonné le fichier, car nous avons utilisé un fichier qui s’appelle \textit{include/ }et dedans nous avons tous les \textit{headers, }et un autre appelé \textit{src/ }avec tous les .c.
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+	\subsection{Extra tests.}\par
+
+\noindent \begin{justify}
+Pour assurer que tout le programme marche comme il doit, nous avons fait de petits tests pour chaque fonction dans tous les \textit{.c}, et avec tous les entrés possibles, pour voir le comportement du code et s’il y avait des erreurs ou bugs. Par exemple nous avons essayé d’appeler la fonction \textit{board$ \_ $ init(size$ \_ $ t size) }avec différentes tailles comme argument. Au moment de jouer nous avons testé que le \textit{parser} dans la fonction \textit{human$ \_ $ player}~n’accepte~que~les~entrées~possibles,~(a5, a       5, A5, Q, q, etc.) si et seulement si l’entrée est valide dans cette instance du jeu. Avec \textit{board$ \_ $ save }et \textit{board$ \_ $ load} nous avons essayé de sauvegarder et de charger tout type de \textit{board, }etc.
+\end{justify}\par
+
+\noindent \begin{justify}
+Quand nous étions proche de finir le projet, nous avons testé le programme en jouant avec des personnes que ne connaît pas le logiciel, et nous leur avons demandé de comment améliorer la fonctionnalité et l’interface du projet, et des opinions pour savoir si le programme était amical et facile d’utiliser pour l’utilisateur.
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+	\subsection{Utilisation des outils pour améliorer le code.}\par
+
+
+\noindent \begin{justify}
+Pour augmenter l’efficacité de notre programme nous avons utilisé quelques outils qui nous permettrons de réduire les erreurs de mémoire au moment d’utiliser mémoire dynamique, et aussi pour diminuer les temps d’exécution. 
+\end{justify}\par
+
+
+\noindent \begin{justify}
+A notre avis l’outil le plus important était \textit{Valgrind, }qui nous permettre debouger les problèmes de mémoire dans le programme et la performance du code. Avec \textit{valgrind} nous pouvons vérifier des points importants dans le fonctionnement du programme, comme l’utilisation de mémoire qui n’a pas été initialisé, la lecture / écriture de mémoire qui a été déjà libéré, la lecture / écriture hors des limites des blocs de mémoire, erreurs de segmentation, fuites de mémoire, etc.
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Mais \textit{valgrind} a une désavantage très important, quand nous exécutons un programme en utilisant \textit{valgrind} l’exécution sera notablement beaucoup moins vite, et comme l’outil est en train de vérifier la mémoire pour chaque instruction du code, la consommation de ressources est plusieurs fois plus grand. C’est pour ça que nous avons utilisé cet outil seulement au moment du codage, pour trouver des erreurs que nous pouvions avoir fait, et nous ne l’utilisons pas pour la compilation normal du programme. 
+\end{justify}\par
+
+
+
+\noindent \begin{justify}
+Pour notre projet nous utilisons plusieurs fois la mémoire dynamique, car nous utilisons des \textit{malloc } et \textit{calloc}, qui sont des fonctions qui allument un espace de mémoire selon la taille qu’on les demande, mais chaque fois que nous allumons un espace de mémoire, nous devons le libérer après l’utiliser, sinon nous aurions des fuites de mémoire, et plusieurs fois dans notre code nous avions des fuites de mémoire, mais avec l’aide de \textit{valgrind} nous pouvions les fixer.
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Par exemple nous utilisons l’instruction suivante:
+\end{justify}\par
+
+
+\noindent \begin{Center}
+\textit{valgrind - -leak-check=full ./reversi-1 }
+\end{Center}\par
+
+
+\noindent \begin{justify}
+pour vérifier si nous avons des erreurs de mémoire dans l’exécutable \textit{reversi-1}, et au moment de finir l’exécution du programme, si nous n’avons pas des erreurs nous aurons cet message:
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}HEAP SUMMARY:
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}in use at exit: 30,620 bytes in 1 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}total heap usage: 17 allocs, 16 frees, 35,868 bytes allocated
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}LEAK SUMMARY:
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}definitely lost: 0 bytes in 0 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}indirectly lost: 0 bytes in 0 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}possibly lost: 0 bytes in 0 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}still reachable: 30,620 bytes in 1 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}suppressed: 0 bytes in 0 blocks
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}Reachable blocks (those to which a pointer was found) are not shown.
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}To see them, rerun with: --leak-check=full --show-leak-kinds=all
+\end{justify}\par
+
+
+\noindent \begin{justify}
+ 
+\end{justify}\par
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}For counts of detected and suppressed errors, rerun with: -v
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Mais dans le cas que nous avons quelque erreur, \textit{valgrind }va nous indiquer où est-ce qu’il se trouve, dans quel fonction et dans quel ligne, et il va nous montrer une trace de l’erreur. Par exemple:
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}28 (64 direct, 64 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 3
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload$ \_ $ memcheck-amd64-linux.so)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x4039F8: moves$ \_ $ alloc (moves.c:28)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x40387E: board$ \_ $ get$ \_ $ moves (board.c:1027)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x4044B8: minimax$ \_ $ ab$ \_ $ player (player.c:267)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x403D7A: random$ \_ $ player (player.c:26)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x400EFE: game (reversi.c:85)
+\end{justify}\par
+
+
+\noindent \begin{justify}
+\hspace*{0.49in}\hspace*{0.49in}by 0x40142B: main (reversi.c:320)
+\end{justify}\par
+
+\vspace{\baselineskip}
+\noindent \begin{justify}
+Ce message veut nous dire que nous avons une petite fuite de mémoire de 28 bytes dans une fonction \textit{moves$ \_ $ alloc} dans la ligne 28 du \textit{moves.c} et qui a été appelé dès la fonction \textit{main} de \textit{reversi.c }dans la ligne 320, en passant aussi pour \textit{player.c, board.c }et en arrivant à \textit{moves.c.}
+\end{justify}\par
+
+
+\noindent \begin{justify}
+Un autre outil que nous avons utilisé était \textit{time}, qui nous permettrons de connaître le temps qui prent le programme en exécuter des instructions. Au moment d’implémenter « l’intelligence artificielle », ou les algorithmes \textit{minimax} pour trouver le meilleur mouvement, nous devons trouver un code qui nous permet ou une implémentation de ces algorithmes pour qu’ils puissent trouver une solution dans le plus petit espace de temps possible. c’est pour ça que nous avons utilisé l’outil \textit{time. }Par exemple nous utilisons l’instruction:
+\end{justify}\par
+
+
+\noindent \begin{Center}
+\textit{time ./reversi-1}
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+
+\noindent Et après faire quelques mouvements dans le joue, nous aurions une sortie comme ce la:\par
+
+
+\noindent \begin{Center}
+\textit{real 0m0.092s}
+\end{Center}\par
+
+
+\noindent \begin{Center}
+\textit{user 0m0.088s}
+\end{Center}\par
+
+
+\noindent \begin{Center}
+\textit{sys 0m0.000s}
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Nous avons utilisé aussi \textit{gprof} ou le profilage du code. Avec cet outil nous pouvons connaître les parties du code qui prennent et consomment plus de temps, ainsi nous pouvons améliorer la maniéré dans laquelle le code fonctionne et comme ça le programme pourra s’exécuter plus rapide et efficace.
+\end{justify}\par
+
+\noindent \begin{justify}
+Pour exécuter \textit{gprof} nous devions changer l’instruction pour compiler le programme, en ajoutant \textit{-pg} à l’instruction. Par exemple dans notre \textit{Makefile} nous devons avoir l’instruction suivante
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{Center}
+\textit{CFLAGS = -std=c11 -Wall -pg -Wextra -g $\#$ -O2}
+\end{Center}\par
+
+
+\vspace{\baselineskip}
+
+\noindent \begin{justify}
+Avec ça, au moment d’exécuter le code, il va créer un fichier qui s’appelle \textit{gmon.out},~avec des statistiques de comment le programme a été exécuté.  Nous pouvons le transformer en format .txt pour le lire. Dans cette fichiers nous aurons une analyse exhaustive de la performance du code. Par exemple:
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}$\%$ ~~~cumulative~~~self~~~~~   self~~~~ total~~~~~~~~~~ 
+\end{justify}\par
+
+
+\noindent \begin{justify}
+ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}time~~~~~~seconds~~ calls  Ts/call~~~~name~~  
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~~~0.00~~~~~7173~~~0.00~~    board$ \_ $ is$ \_ $ move$ \_ $ valid
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~~0.00~~~~~~~88~~~~~0.00~~~    board$ \_ $ count$ \_ $ moves
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~~0.00~~~~~~~46~~~~~0.00~~    moves$ \_ $ set
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~19~~~~~0.00~~~    board$ \_ $ get$ \_ $ size
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~12~~~~~0.00~~~    board$ \_ $ get$ \_ $ player
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~12~~~~~0.00~~~    board$ \_ $ play
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~12~~~~~0.00~~~    board$ \_ $ score
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~12~~~~~0.00~~    playervalid
+\end{justify}\par
+
+
+\noindent \begin{justify}
+~ \hspace*{0.49in}\hspace*{0.49in}\hspace*{0.49in}0.00~~~~~~~0.00~~~~~~~~7~~~~~0.00~~~    moves$ \_ $ alloc
+\end{justify}\par
+
+
+\vspace{\baselineskip}
+
+\vspace{\baselineskip}
+\end{document}\grid
+\grid
